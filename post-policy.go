@@ -184,6 +184,23 @@ func (p *PostPolicy) SetSuccessStatusAction(status string) error {
 	return nil
 }
 
+// SetACL - Sets access level for this policy.
+func (p *PostPolicy) SetACL(acl string) error {
+	if strings.TrimSpace(acl) == "" || acl == "" {
+		return ErrInvalidArgument("ACL is empty")
+	}
+	policyCond := policyCondition{
+		matchType: "eq",
+		condition: "$acl",
+		value:     acl,
+	}
+	if err := p.addNewPolicy(policyCond); err != nil {
+		return err
+	}
+	p.formData["acl"] = acl
+	return nil
+}
+
 // SetUserMetadata - Set user metadata as a key/value couple.
 // Can be retrieved through a HEAD request or an event.
 func (p *PostPolicy) SetUserMetadata(key string, value string) error {
